@@ -9,6 +9,7 @@ dependencies {
     compile 'com.android.support:support-annotations:26.0.2'
     compile 'com.android.support:recyclerview-v7:26.0.2'
 }
+group = 'com.github.deya360'
 
 android {
     compileSdkVersion 26
