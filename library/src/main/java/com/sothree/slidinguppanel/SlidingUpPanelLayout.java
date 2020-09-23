@@ -515,6 +515,16 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
 
     /**
+     * Removes all panel slide listeners
+     */
+    public void removePanelSlideListeners() {
+        synchronized (mPanelSlideListeners) {
+            mPanelSlideListeners.clear();
+        }
+    }
+
+
+    /**
      * Provides an on click for the portion of the main view that is dimmed. The listener is not
      * triggered if the panel is in a collapsed or a hidden position. If the on click listener is
      * not provided, the clicks on the dimmed area are passed through to the main layout.
