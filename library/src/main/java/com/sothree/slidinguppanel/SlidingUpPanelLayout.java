@@ -1157,12 +1157,12 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
     }
 
-    private void onPanelDragged(int newTop) {
+    private void onPanelDragged(int newTop, int dy) {
         if (mSlideState != PanelState.DRAGGING_UP && mSlideState != PanelState.DRAGGING_DOWN) {
             mLastNotDraggingSlideState = mSlideState;
         }
 
-        if (newTop<0) {
+        if (dy<0) {
             setPanelStateInternal(PanelState.DRAGGING_UP);
         } else {
             setPanelStateInternal(PanelState.DRAGGING_DOWN);
@@ -1396,7 +1396,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         @Override
         public void onViewPositionChanged(View changedView, int left, int top, int dx, int dy) {
-            onPanelDragged(top);
+            onPanelDragged(top, dy);
             invalidate();
         }
 
