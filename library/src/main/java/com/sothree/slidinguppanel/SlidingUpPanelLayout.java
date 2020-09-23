@@ -171,7 +171,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
         COLLAPSED,
         ANCHORED,
         HIDDEN,
-        DRAGGING
+        DRAGGING_UP,
+        DRAGGING_DOWN
     }
 
     private PanelState mSlideState = DEFAULT_SLIDE_STATE;
@@ -1104,13 +1105,14 @@ public class SlidingUpPanelLayout extends ViewGroup {
             mDragHelper.abort();
         }
 
-        if (state == null || state == PanelState.DRAGGING) {
+        if (state == null || state == PanelState.DRAGGING_UP || state == PanelState.DRAGGING_DOWN) {
             throw new IllegalArgumentException("Panel state cannot be null or DRAGGING.");
         }
         if (!isEnabled()
                 || (!mFirstLayout && mSlideableView == null)
                 || state == mSlideState
-                || mSlideState == PanelState.DRAGGING) return;
+                || mSlideState == PanelState.DRAGGING_UP
+                || mSlideState == PanelState.DRAGGING_DOWN) return;
 
         if (mFirstLayout) {
             setPanelStateInternal(state);
@@ -1156,10 +1158,16 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
 
     private void onPanelDragged(int newTop) {
-        if (mSlideState != PanelState.DRAGGING) {
+        if (mSlideState != PanelState.DRAGGING_UP && mSlideState != PanelState.DRAGGING_DOWN) {
             mLastNotDraggingSlideState = mSlideState;
         }
-        setPanelStateInternal(PanelState.DRAGGING);
+
+        if (newTop<0) {
+            setPanelStateInternal(PanelState.DRAGGING_UP);
+        } else {
+            setPanelStateInternal(PanelState.DRAGGING_DOWN);
+        }
+
         // Recompute the slide offset based on the new top position
         mSlideOffset = computeSlideOffset(newTop);
         applyParallaxForCurrentSlideOffset();
@@ -1335,7 +1343,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
     public Parcelable onSaveInstanceState() {
         Bundle bundle = new Bundle();
         bundle.putParcelable("superState", super.onSaveInstanceState());
-        bundle.putSerializable(SLIDING_STATE, mSlideState != PanelState.DRAGGING ? mSlideState : mLastNotDraggingSlideState);
+        bundle.putSerializable(SLIDING_STATE,
+                               (mSlideState != PanelState.DRAGGING_UP && mSlideState != PanelState.DRAGGING_DOWN) ?
+                                       mSlideState : mLastNotDraggingSlideState);
         return bundle;
     }
 
